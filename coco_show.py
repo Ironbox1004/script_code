@@ -52,7 +52,7 @@ def showBBox(coco, anns, label_box=True, is_filling=True):
 
 # only_bbox 为True表示仅仅可视化bbox，其余label不显示
 # show_all 表示所有类别都显示，否则category_name来确定显示类别
-def show_coco(data_root, ann_file, img_prefix, only_bbox=True, show_all=True, category_name='bicycle'):
+def show_coco(data_root, ann_file, img_prefix, only_bbox=True, show_all=True):
     example_coco = COCO(ann_file)
     print('图片总数：{}'.format(len(example_coco.getImgIds())))
     categories = example_coco.loadCats(example_coco.getCatIds())
@@ -62,17 +62,17 @@ def show_coco(data_root, ann_file, img_prefix, only_bbox=True, show_all=True, ca
     if show_all:
         category_ids = []
     else:
-        category_ids = example_coco.getCatIds(category_name)
+        category_ids = example_coco.getCatIds()
     image_ids = example_coco.getImgIds(catIds=category_ids)
 
     for i in tqdm(range(len(image_ids))):
         plt.figure()
-        # plt.figure(dpi=20, figsize=(5, 5))
+        # plt.figure(dpi=200, figsize=(5, 5))
         image_data = example_coco.loadImgs(image_ids[i])[0]
         path = os.path.join(data_root, img_prefix, image_data['file_name'])
         image = cv2.imread(path)
         plt.imshow(image)
-        annotation_ids = example_coco.getAnnIds(imgIds=image_data['id'], catIds=category_ids, iscrowd=1)
+        annotation_ids = example_coco.getAnnIds(imgIds=image_data['id'], catIds=category_ids)
         if not annotation_ids:
 
             continue
@@ -89,9 +89,9 @@ def show_coco(data_root, ann_file, img_prefix, only_bbox=True, show_all=True, ca
 
 if __name__ == '__main__':
     # 和cfg里面设置一样 coco
-    data_root = './'
-    ann_file = data_root + 'train1.json'
-    img_prefix = 'pic/'
+    data_root = '/home/chenzhen/code/detection/datasets/dt_imgdata/coco_train/'
+    ann_file = data_root + 'annotations/train.json'
+    img_prefix = '/home/chenzhen/code/detection/datasets/dt_imgdata/coco_train/train/'
     show_coco(data_root, ann_file, img_prefix)
 
     # # voc转化为coco后显示

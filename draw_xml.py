@@ -28,7 +28,7 @@ def parse_rec(filename):
 # 可视化
 
 def visualise_gt(objects, img_dir):
-    save_path = r"D:\dt_detection\datasets\results\\"
+    save_path = "/home/chenzhen/code/detection/dt_mmdetection/output/save/"
     for id, img_path in enumerate(img_dir):
         img = Image.open(img_path)
         draw = ImageDraw.Draw(img)
@@ -39,17 +39,17 @@ def visualise_gt(objects, img_dir):
             ymax = int(a['bbox'][3])
             label = a['name']
             draw.rectangle((xmin, ymin, xmax, ymax), fill=None, outline='#0504aa', width=2)
-            draw.text((xmin - 10, ymin - 15), label, fill='#0504aa', font=font)  # 利用ImageDraw的内置函数，在图片上写入文字
+            draw.text((xmin - 10, ymin - 15), label, fill='#0504aa')  # 利用ImageDraw的内置函数，在图片上写入文字
         # img.show()
         finename = save_path + str(uuid.uuid1()) + ".jpg"
         img.save(finename)
 
 
 
-fontPath = "C:\Windows\Fonts\Consolas\consola.ttf"  # 字体路径
-ann_path = r"D:\dt_detection\datasets\test_xml" # xml文件所在路径
-pic_path = r"D:\dt_detection\datasets\test_img"  # 样本图片路径
-font = ImageFont.truetype(fontPath, 16)
+
+ann_path = "/home/chenzhen/code/detection/dt_mmdetection/output/xml" # xml文件所在路径
+pic_path = "/home/chenzhen/code/detection/dt_mmdetection/output/output_bbox_2399_imgs"  # 样本图片路径
+
 
 for filename in os.listdir(ann_path):
     xml_path = os.path.join(ann_path, filename)

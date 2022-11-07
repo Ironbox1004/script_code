@@ -4,7 +4,7 @@ import xml.etree.ElementTree as ET
 from os.path import join as pjoin
 from tqdm import tqdm
 
-src = "/home/chenzhen/code/detection/datasets/union2voc_multiClass/VOCdevkit/VOC_UnDt20220823/ignore_xml_1"
+src = "/home/chenzhen/code/detection/datasets/union2voc_multiClass/VOCdevkit/VOC_UnDt20220823/ignore_xml"
 # area_poly = [[1263,85],[1482,275]]
 area_poly = [[1273,89],[1492,89],[1492,279],[1273,279]]
 

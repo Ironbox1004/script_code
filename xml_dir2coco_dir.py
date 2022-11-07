@@ -8,9 +8,9 @@ import xml.etree.ElementTree as ET
 from PIL import Image
 from tqdm import trange
 
-root_dir = "/home/chenzhen/code/detection/datasets/union2voc_multiClass/copy_data"
-img_path = "/home/chenzhen/code/detection/datasets/union2voc_multiClass/copy_data/pic"
-xml_path = "/home/chenzhen/code/detection/datasets/union2voc_multiClass/copy_data/xml"
+root_dir = "/home/chenzhen/code/detection/datasets/union2voc_multiClass/copy_data_2"
+img_path = "/home/chenzhen/code/detection/datasets/union2voc_multiClass/copy_data_2/pic"
+xml_path = "/home/chenzhen/code/detection/datasets/union2voc_multiClass/copy_data_2/xml"
 
 class_name_to_id = {'Car': 0, 'Bus': 1, 'Cyclist': 2, 'Pedestrian': 3,
                     'driverless_car': 4, 'Truck': 5, 'Tricyclist': 6, 'Trafficcone': 7}
@@ -55,8 +55,8 @@ for img in train_img:
             license=0,
             url=None,
             file_name=img,  # 图片的文件名带后缀
-            height=1920,
-            width=1080,
+            width=1920,
+            height=1080,
             date_captured=None,
             # id=image[:-4],
             id=images_id[img[:-4]],
@@ -98,4 +98,4 @@ for xml in train_xml:
         )
         bbox_id += 1
 
-json.dump(data, open(os.path.join(root_dir,  'train1.json'), 'w'))
+json.dump(data, open(os.path.join(root_dir,  'train.json'), 'w'))

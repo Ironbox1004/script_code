@@ -1,6 +1,6 @@
 
-train_text = "/home/chenzhen/code/detection/datasets/union2voc_multiClass/yolo_dataset/ImageSets/train.txt"
-val_text = "/home/chenzhen/code/detection/datasets/union2voc_multiClass/yolo_dataset/ImageSets/val.txt"
+train_text = "/home/chenzhen/code/detection/datasets/dt_imgdata/VOC_DT_20221026/ImageSets/Main/train.txt"
+val_text = "/home/chenzhen/code/detection/datasets/dt_imgdata/VOC_DT_20221026/ImageSets/Main/test.txt"
 
 train_list = []
 val_list = []
