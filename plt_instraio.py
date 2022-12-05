@@ -26,7 +26,7 @@ def normfun(x, mu, sigma):
     return pdf
 count = 0
 bus_area = []
-path = r"D:\dt_detection\datasets\union2voc_multiClass\VOCdevkit\VOC_UnDt20220823\process"
+path = "/home/chenzhen/code/detection/datasets/dt_imgdata/VOC_DT_20221115/Annotations"
 for category_name in tqdm(os.listdir(path)):
     annotations_path = pjoin(path, category_name)
     tree = ET.parse(annotations_path)
@@ -36,7 +36,7 @@ for category_name in tqdm(os.listdir(path)):
         # bbox = obj.find("bndbox")
         # area = cal_area(bbox)
         # bus_area.append(math.sqrt(area))
-        if obj.find("name").text == "Cyclist":
+        if obj.find("name").text == "Unmanned_riding":
             count = count + 1
             bbox = obj.find("bndbox")
             area = cal_area(bbox)

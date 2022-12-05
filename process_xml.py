@@ -11,8 +11,13 @@ import xml.etree.ElementTree as ET
 from tqdm import tqdm
 
 path = r"E:\detection\datasets\union2voc_multiClass\VOCdevkit\VOC_UnDt20220823\process"
-num_list = ['Car', 'Bus', 'Cyclist', 'Pedestrian', 'driverless_car', 'Truck', 'Tricyclist', 'Trafficcone']
-car_num, bus_num,cyclist_num,pede_num,driver_num,truck_num,tricyclist_num,trafficone_num,barrowist_num = 0,0,0,0,0,0,0,0,0
+# num_list = ['Car', 'Bus', 'Cyclist', 'Pedestrian', 'driverless_car', 'Truck', 'Tricyclist', 'Trafficcone']
+num_list = ['ride','special target','car','truck','pedestrian','Tricycle','big special vehicle','engineering vehicler',
+            'bus','dock','Small special vehicle','Jingdong car','movable','other movable objects','Other special vehicles',
+            'anlmal']
+
+ride,special_target,car,truck,pedestrian,Tricycle,big_special_vehicle,engineering_vehicler,bus,dock,Small_special_vehicle, Jingdong_car,movable,other_movable_objects,Other_special_vehicles,anlmal=\
+    0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 for category_name in tqdm(os.listdir(path)):
     annotations_path = pjoin(path, category_name)
     updateTree = ET.parse(annotations_path)

@@ -1,3 +1,13 @@
+"""
+   （1）将['other', ' other']转换为iscrowd
+   （2）根据map更改标注中的类
+   :param anno_list: 所有标注文件的list
+   :param class_map: 类型映射关系
+   :return:
+   type: ['两轮车（骑行）', '特殊目标（固定的）', '轿车', '货车', '行人', '三轮车', '大特种车', '工程车', '巴士',
+         '无人骑行（停靠）', '小特种车', '京东小车', '障碍物（可活动的）', '其他可移动物', '其他特种车', '动物']
+   """
+
 import os
 from lxml import etree
 from loguru import logger
@@ -11,17 +21,11 @@ import shutil
 最终需要的类
 """
 CLASSES = [
-        "Car",     # 大机动车
-        "Bus",  # 小机动车
-        "Non_Motor",     # 非机动车
+        "Big car",     # 大机动车
+        "Small car",  # 小机动车
+        "Non motor",     # 非机动车
         "Pedestrian",    #行人
-        "Driverless_Car",  # 障碍物
-        "Truck",
-        "Animal",
-        "Obstacle",
-        "Special_Target",
-        "Other_Objects",
-        "Unmanned_riding"
+        "Obstacle",  # 障碍物
     ]
 
 def class_filter(anno_list, class_map=None):
@@ -31,44 +35,63 @@ def class_filter(anno_list, class_map=None):
     :param anno_list: 所有标注文件的list
     :param class_map: 类型映射关系
     :return:
-    type: ['两轮车（骑行）', '特殊目标（固定的）', '轿车', '货车', '行人', '三轮车', '大特种车', '工程车', '巴士',
-          '无人骑行（停靠）', '小特种车', '京东小车', '障碍物（可活动的）', '其他可移动物', '其他特种车', '动物']
     """
-    # 类别影射
+    #类别影射
+    '''
+    type: ['两轮车（骑行）', '特殊目标（固定的）', '轿车', '货车', '行人', '三轮车', '大特种车', '工程车', '巴士',
+         '无人骑行（停靠）', '小特种车', '京东小车', '障碍物（可活动的）', '其他可移动物', '其他特种车', '动物']
+    '''
+
     sub_type_map = {
-        'Car': [
-            '轿车', '小特种车'
+        'ride': [
+            '两轮车（骑行）'
         ],
-        'Bus': [
-            '巴士'
-        ],
-        'Non_Motor': [
-            '两轮车（骑行）', '三轮车', '其他特种车'
-        ],
-        'Pedestrian': [
-            '行人'
-        ],
-        'Driverless_Car': [
-            '京东小车'
-        ],
-        'Truck': [
-            '货车', '大特种车', '工程车'
-        ],
-        'Animal': [
-            '动物'
-        ],
-        'Obstacle': [
-            '障碍物（可活动的）'
-        ],
-        'Special_Target': [
+        'special target': [
             '特殊目标（固定的）'
         ],
-        'Other_Objects': [
+        'car': [
+            '轿车',
+        ],
+        'truck': [
+            '货车'
+        ],
+        'pedestrian': [
+            '行人',
+        ],
+        'Tricycle': [
+            '三轮车'
+        ],
+        'big special vehicle': [
+            '大特种车'
+        ],
+        'engineering vehicler': [
+            '工程车',
+        ],
+        'bus': [
+            '巴士'
+        ],
+        'dock': [
+            '无人骑行（停靠）',
+        ],
+        'Small special vehicle': [
+            '小特种车'
+        ],
+        'Jingdong car': [
+            '京东小车',
+        ],
+        'movable': [
+            '障碍物（可活动的）'
+        ],
+        'other movable objects': [
             '其他可移动物'
         ],
-        'Unmanned_riding': [
-            '无人骑行（停靠）'
+        'Other special vehicles': [
+          '其他特种车'
+        ],
+        'anlmal': [
+            "动物"
         ]
+
     }
 
     pbar = tqdm(anno_list, desc="filter mapping")
@@ -76,12 +99,17 @@ def class_filter(anno_list, class_map=None):
         for idx in range(len(echo_anno["shapes"])-1, -1, -1):     # 因为在遍历过程中会删除元素，所以逆序遍历
             obj = echo_anno["shapes"][idx]
             type = obj["type"]
+
+            # face = obj['face'] if obj['face'] != '' else "None"
+
             isMatch = False # 记录标签是否匹配到了map中的值
             for k, v in sub_type_map.items():
                 if type in v:
                     type = obj["type"] = k
                     isMatch = True
                     break
+
+
             assert isMatch, f"{type} 没有匹配的map值"
         pass
 
@@ -90,46 +118,6 @@ def class_filter(anno_list, class_map=None):
 
 def save2xml(anno_list, voc_anno_dir, src_img_dir, dst_img_dir, args, proess_type="train") -> list:
     """
-    将标注数据保存到voc数据格式
-    :param anno_list: 标注解析list
-    :param voc_anno_dir: xml的存放目录
-    :param src_img_dir : 原始图片目录
-    :param dst_img_dir: voc图片保存目录
-    :param args: 终端传入的信息
-    :return: 数据名列表
-
-    VOC 数据格式 xml， 只留下的需要用到的部分
-        <annotation>
-            <folder>VOC2012</folder>
-            <filename>2007_000027.jpg</filename>
-            <source>
-                <database>The VOC2007 Database</database>
-                <annotation>PASCAL VOC2007</annotation>
-                <metadata_weather>sun</metadata_weather>
-                <metadata_lightning>light</metadata_lightning>
-            </source>
-            <size>
-                <width>486</width>
-                <height>500</height>
-                <depth>3</depth>
-            </size>
-            <object>
-                <name>person</name>
-                <visibility>clear</visibility>    # 可见度
-                <occlude>0</occlude>   # 截断系数
-                <truncation_factor>0</truncation_factor>   # 遮挡系数
-                <face>top</face> #目标朝向
-                <bndbox>
-                    <xmin>174</xmin>
-                    <ymin>101</ymin>
-                    <xmax>349</xmax>
-                    <ymax>351</ymax>
-                </bndbox>
-            </object>
-            <object>
-                ...
-            </object>
-        </annotation>
     """
     name_list = []
     folder_info = args.folder_info
@@ -139,6 +127,12 @@ def save2xml(anno_list, voc_anno_dir, src_img_dir, dst_img_dir, args, proess_typ
     pbar = tqdm(anno_list, desc=f"{proess_type}...")
     for each_anno in pbar:
         image_name = each_anno['image']["image_name"]
+
+        try:
+            metadata_weather = each_anno['image']["metadata"]['weather']
+            metadata_lightning = each_anno['image']["metadata"]['lightning']
+        except:
+            pass
         base_name = ".".join(image_name.split(".")[:-1])  # 去掉最后的 .扩展名
         image_type = image_name.split(".")[-1]  # 获取图片类型用于格式转化，暂时未用；现在用直接改名的方式
         image_target_name = base_name + ".jpg"  # 都需要改为.jpg格式
@@ -153,11 +147,13 @@ def save2xml(anno_list, voc_anno_dir, src_img_dir, dst_img_dir, args, proess_typ
         source = etree.SubElement(root, "source")
         etree.SubElement(source, "database").text = source_database_info
         etree.SubElement(source, "annotation").text = source_annotation_info
+        etree.SubElement(source, "metadata_weather").text = metadata_weather
+        etree.SubElement(source, "metadata_lightning").text = metadata_lightning
         size = etree.SubElement(root, "size")
         # 数据集中很多标注的宽高都是0
         image_width = 1920
         image_height = 1080
-        assert image_width>0 and image_height>0, f"{base_name}标注文文件中图片宽高信息异常"
+        assert image_width > 0 and image_height > 0, f"{base_name}标注文文件中图片宽高信息异常"
         # if image_width>0 and image_height>0: print(f"{base_name}标注文文件中图片宽高信息异常")
         etree.SubElement(size, "width").text = str(image_width)
         etree.SubElement(size, "height").text = str(image_height)
@@ -196,8 +192,8 @@ def save2xml(anno_list, voc_anno_dir, src_img_dir, dst_img_dir, args, proess_typ
 def make_argParse():
     parser = argparse.ArgumentParser()
     parser.add_argument('--dataset_path', default="/home/chenzhen/code/detection/datasets/dt_imgdata", help="数据集的根目录")
-    parser.add_argument('--folder_info', default="VOC_DT_20221114", help="xml中文件夹名，并以此为名为目录保存数据")
-    parser.add_argument('--source_database_info', default="val_img_data", help="数据来源")
+    parser.add_argument('--folder_info', default="VOC_DT_20221111", help="xml中文件夹名，并以此为名为目录保存数据")
+    parser.add_argument('--source_database_info', default="img_data", help="数据来源")
     parser.add_argument('--source_annotation_info', default="DT", help="数据标注者")
     parser.add_argument('--voc_save_path', default="/home/chenzhen/code/detection/datasets/dt_imgdata", help="voc格式数据保存目录")
     parser.add_argument('--data_split_path', default=None, help="数据分割指定的目录")
@@ -242,7 +238,7 @@ def main():
 
     # 数据集分割
     if args.data_split_path is None:
-        train_name_list, test_name_list = train_test_split(all_name_list, train_size=0.8, random_state=0)
+        train_name_list, test_name_list = train_test_split(all_name_list, train_size=0.8, test_size=0.2, random_state=0, shuffle=True)
     train_name_path = os.path.join(train_val_dir, "train.txt")
     test_name_path = os.path.join(train_val_dir, "test.txt")
     with open(train_name_path, "w", encoding="utf-8") as wf:

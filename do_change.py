@@ -11,11 +11,17 @@ import shutil
 最终需要的类
 """
 CLASSES = [
-        "Big car",     # 大机动车
-        "Small car",  # 小机动车
-        "Non motor",     # 非机动车
+        "Car",     # 大机动车
+        "Bus",  # 小机动车
+        "Cycling",     # 非机动车
         "Pedestrian",    #行人
-        "Obstacle",  # 障碍物
+        "driverless_Car",  # 障碍物
+        "Truck",
+        "Animal",
+        "Obstacle",
+        "Special_Target",
+        "Other_Objects",
+        "Unmanned_riding"
     ]
 
 def class_filter(anno_list, class_map=None):
@@ -25,29 +31,48 @@ def class_filter(anno_list, class_map=None):
     :param anno_list: 所有标注文件的list
     :param class_map: 类型映射关系
     :return:
+    json_original_type ['非机动车', '障碍物', '小机动车', '大机动车', '行人']
     """
-    #类别影射
+    # 类别影射
     sub_type_map = {
-        'Big car': [
-            '大机动车'
+        'Car': [
+            '轿车', '小特种车'
         ],
-        'Small car': [
-            '小机动车'
+        'Bus': [
+            '巴士'
         ],
-        'Non motor': [
-            '非机动车',
+        'Cycling': [
+            '两轮车（骑行）', '三轮车', '其他特种车'
         ],
         'Pedestrian': [
             '行人'
         ],
+        'driverless_Car': [
+            '京东小车'
+        ],
+        'Truck': [
+            '货车', '大特种车', '工程车'
+        ],
+        'Animal': [
+            '动物'
+        ],
         'Obstacle': [
-            '障碍物',
+            '障碍物（可活动的）'
+        ],
+        'Special_Target': [
+            '特殊目标（固定的）'
+        ],
+        'Other_Objects': [
+            '其他可移动物'
+        ],
+        'Unmanned_riding': [
+            '无人骑行（停靠）'
         ]
     }
 
     #可见度映射
     vis_type_map = {
-        'clear': ['清晰'], 'normal': ['一般'], 'suboptimal': ['中下'], 'bad': ['困难']
+        '0': ['清晰'], '1': ['一般'], '2': ['中下'], '3': ['困难']
     }
     #遮挡映射
     occ_type_map = {
@@ -59,7 +84,7 @@ def class_filter(anno_list, class_map=None):
     }
     #朝向映射
     face_type_map = {
-        'top': ['上'], 'down': ['下'], 'left': ['左'], 'right': ['右'], 'no_face': ['no_face']
+        '0': ['上'], '1': ['下'], '2': ['左'], '3': ['右'], '4': ['no_face']
     }
 
     #天气映射
@@ -76,7 +101,7 @@ def class_filter(anno_list, class_map=None):
     for echo_anno in pbar:
         for idx in range(len(echo_anno["shapes"])-1, -1, -1):     # 因为在遍历过程中会删除元素，所以逆序遍历
             obj = echo_anno["shapes"][idx]
-            type = obj["original_type"]
+            type = obj["type"]
             visibility = obj['visibility']
             occlude = obj['occlude']
             truncation_factor = obj['truncation_factor']
@@ -98,7 +123,7 @@ def class_filter(anno_list, class_map=None):
             isMatch = False # 记录标签是否匹配到了map中的值
             for k, v in sub_type_map.items():
                 if type in v:
-                    type = obj["original_type"] = k
+                    type = obj["type"] = k
                     isMatch = True
                     break
 
@@ -221,7 +246,7 @@ def save2xml(anno_list, voc_anno_dir, src_img_dir, dst_img_dir, args, proess_typ
         # 数据集中很多标注的宽高都是0
         image_width = 1920
         image_height = 1080
-        assert image_width>0 and image_height>0, f"{base_name}标注文文件中图片宽高信息异常"
+        assert image_width > 0 and image_height > 0, f"{base_name}标注文文件中图片宽高信息异常"
         # if image_width>0 and image_height>0: print(f"{base_name}标注文文件中图片宽高信息异常")
         etree.SubElement(size, "width").text = str(image_width)
         etree.SubElement(size, "height").text = str(image_height)
@@ -232,10 +257,10 @@ def save2xml(anno_list, voc_anno_dir, src_img_dir, dst_img_dir, args, proess_typ
             if obj_anno["original_type"] is None:
                 etree.SubElement(obj, "name").text = "NULL"
             else:
-                etree.SubElement(obj, "name").text = obj_anno["original_type"]
+                etree.SubElement(obj, "name").text = obj_anno["type"]
             etree.SubElement(obj, "visibility").text = obj_anno["visibility"]
-            etree.SubElement(obj, "occlude").text = obj_anno["occlude"]
-            etree.SubElement(obj, "truncation_factor").text = obj_anno["truncation_factor"]
+            etree.SubElement(obj, "occ").text = obj_anno["occlude"]
+            etree.SubElement(obj, "direct").text = obj_anno["truncation_factor"]
             try:
                 etree.SubElement(obj, "face").text = obj_anno["face"]
             except:
@@ -266,9 +291,9 @@ def save2xml(anno_list, voc_anno_dir, src_img_dir, dst_img_dir, args, proess_typ
 
 def make_argParse():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--dataset_path', default="/home/chenzhen/code/detection/datasets/dt_imgdata", help="数据集的根目录")
-    parser.add_argument('--folder_info', default="VOC_DT_20221026", help="xml中文件夹名，并以此为名为目录保存数据")
-    parser.add_argument('--source_database_info', default="img_data", help="数据来源")
+    parser.add_argument('--dataset_path', default="/home/chenzhen/code/detection/datasets/dt_imgdata/hangzhou/shijiao2", help="数据集的根目录")
+    parser.add_argument('--folder_info', default="VOC_DT_20221130-2", help="xml中文件夹名，并以此为名为目录保存数据")
+    parser.add_argument('--source_database_info', default="img_data_shijiao2", help="数据来源")
     parser.add_argument('--source_annotation_info', default="DT", help="数据标注者")
     parser.add_argument('--voc_save_path', default="/home/chenzhen/code/detection/datasets/dt_imgdata", help="voc格式数据保存目录")
     parser.add_argument('--data_split_path', default=None, help="数据分割指定的目录")
@@ -281,7 +306,7 @@ def main():
     args = parser.parse_args()
 
     dataset_path = args.dataset_path
-    imgs_path = os.path.join(dataset_path, "imgs")
+    imgs_path = os.path.join(dataset_path, "images")
     labels_path = os.path.join(dataset_path, "labels")
 
     # 获取标注信息
@@ -313,7 +338,7 @@ def main():
 
     # 数据集分割
     if args.data_split_path is None:
-        train_name_list, test_name_list = train_test_split(all_name_list, train_size=0.8, random_state=0)
+        train_name_list, test_name_list = train_test_split(all_name_list, train_size=0.8, test_size=0.2, random_state=0,shuffle=True)
     train_name_path = os.path.join(train_val_dir, "train.txt")
     test_name_path = os.path.join(train_val_dir, "test.txt")
     with open(train_name_path, "w", encoding="utf-8") as wf:

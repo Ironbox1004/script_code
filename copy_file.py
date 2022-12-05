@@ -1,6 +1,6 @@
 import shutil
 
-import imageio
+
 import numpy as np
 import os
 import cv2
@@ -55,15 +55,15 @@ import os
 
 
 
-img_path = '/home/chenzhen/code/detection/dt_mmdetection/output/output_bbox_2399_imgs'
-xml_path = '/home/chenzhen/code/detection/datasets/union2voc_multiClass/VOCdevkit/VOC_UnDt20220823/ignore_xml/'
-save_xml_path = '/home/chenzhen/code/detection/dt_mmdetection/output/xml'
+img_path = '/home/chenzhen/code/detection/datasets/dt_imgdata/640-640-result-1'
+xml_path = '/home/chenzhen/code/detection/datasets/dt_imgdata/VOC_DT_20221115/Annotations/'
+save_xml_path = '/home/chenzhen/code/detection/datasets/dt_imgdata/val_xml_label'
 
 for img_list in os.listdir(img_path):
     img_name = img_list.split('.')
-    if len(img_name) == 2:
-        copy_name = xml_path + str(img_name[0])  + '.xml'
-        shutil.copy(copy_name, save_xml_path)
-    else:
-        copy_name = xml_path + str(img_name[0]) + '.' + str(img_name[1]) + '.xml'
-        shutil.copy(copy_name, save_xml_path)
+    # if len(img_name) == 2:
+    #     copy_name = xml_path + str(img_name[0])  + '.xml'
+    #     shutil.copy(copy_name, save_xml_path)
+    # else:
+    copy_name = xml_path + str(img_name[0]) + '.' + str(img_name[1]) + '.xml'
+    shutil.copy(copy_name, save_xml_path)
