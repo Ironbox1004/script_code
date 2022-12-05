@@ -26,4 +26,4 @@ for echo_anno in pbar:
         if type not in json_type:json_type.append(type)
         if original_type not in json_original_type:json_original_type.append(original_type)
 print("type:", json_type)
-print("json_original_type",json_original_type)
+print("json_original_type", json_original_type)
