@@ -6,9 +6,9 @@ import json
 
 
 def ConvertVOCXml(file_path="", file_name=""):
-    xml_file = open(('/home/chenzhen/code/detection/datasets/Dair_x2x/single-infrastructure-side-xml/' + file_name[:-5] + '.xml'), 'w')
+    xml_file = open(('/home/chenzhen/code/detection/datasets/Dair_x2x/cooperative-vehicle-infrastructure-xml/' + file_name[:-5] + '.xml'), 'w')
 
-    f2 = open(('/home/chenzhen/code/detection/datasets/Dair_x2x/single-infrastructure-side/calib/camera_intrinsic/' + file_name))
+    f2 = open(('/home/chenzhen/code/detection/datasets/Dair_x2x/cooperative-vehicle-infrastructure/infrastructure-side/calib/camera_intrinsic/' + file_name))
     content2 = json.load(f2)
 
     xml_file.write('<annotation>\n')
@@ -20,12 +20,12 @@ def ConvertVOCXml(file_path="", file_name=""):
     xml_file.write('        <date_captured>' + str(content2['cameraID']) + '</date_captured>\n')
     xml_file.write('    </size>\n')
 
-    f = open(('/home/chenzhen/code/detection/datasets/Dair_x2x/single-infrastructure-side/label/camera/' + file_name))
+    f = open(('/home/chenzhen/code/detection/datasets/Dair_x2x/cooperative-vehicle-infrastructure/infrastructure-side/label/camera/' + file_name))
     content = json.load(f)
 
     for i in range(len(content)):
         gt_label = content[i]['type']
-        gt_direct = content[i]['truncated_state']
+        gt_truncate = content[i]['truncated_state']
         gt_occ = content[i]['occluded_state']
         xmin = content[i]['2d_box']['xmin']
         ymin = content[i]['2d_box']['ymin']
@@ -36,8 +36,10 @@ def ConvertVOCXml(file_path="", file_name=""):
         xml_file.write('    <object>\n')
         xml_file.write('        <name>' + str(gt_label) + '</name>\n')
         xml_file.write('        <pose>Unspecified</pose>\n')
-        xml_file.write('        <direct>' + str(gt_direct) + '</direct>\n')
+        xml_file.write('        <truncate>' + str(gt_truncate) + '</truncate>\n')
         xml_file.write('        <occ>' + str(gt_occ) + '</occ>\n')
+        xml_file.write('        <direct>0</direct>\n')
+        xml_file.write('        <iscrowd>0</iscrowd>\n')
         xml_file.write('        <bndbox>\n')
         xml_file.write('            <xmin>' + str(xmin) + '</xmin>\n')
         xml_file.write('            <ymin>' + str(ymin) + '</ymin>\n')
@@ -50,13 +52,13 @@ def ConvertVOCXml(file_path="", file_name=""):
 
 
 if __name__ == "__main__":
-    basePath = '/home/chenzhen/code/detection/datasets/Dair_x2x/single-infrastructure-side/label/camera/'  # dair-v2x数据集的json文件放置位置
+    basePath = '/home/chenzhen/code/detection/datasets/Dair_x2x/cooperative-vehicle-infrastructure/infrastructure-side/label/camera/'  # dair-v2x数据集的json文件放置位置
     totaljson = os.listdir(basePath)
     totaljson.sort()
     total_num = 0
     flag = False
     print("正在转换")
-    saveBasePath = '/home/chenzhen/code/detection/datasets/Dair_x2x/single-infrastructure-side-xml//'  # voc格式的xml文件放置位置
+    saveBasePath = '/home/chenzhen/code/detection/datasets/Dair_x2x/cooperative-vehicle-infrastructure-xml/'  # voc格式的xml文件放置位置
     if os.path.exists(saveBasePath) == False:  # 判断文件夹是否存在
         os.makedirs(saveBasePath)
 

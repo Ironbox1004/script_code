@@ -5,7 +5,7 @@ from os.path import join as pjoin
 from tqdm import tqdm
 
 
-src = "/home/chenzhen/code/detection/datasets/Dair_x2x/cooperative-vehicle-infrastructure-xml"
+src = "/home/chenzhen/code/detection/datasets/repo3d/val/xml_label"
 
 for category_name in tqdm(os.listdir(src)):
     annotations_path = pjoin(src, category_name)
@@ -32,5 +32,8 @@ for category_name in tqdm(os.listdir(src)):
 
         elif obj.find("name").text == "Trafficcone":
             obj.find("name").text = 'Special_Target'
+
+        elif obj.find("name").text == "Tricyclist":
+            obj.find("name").text = 'Cycling'
 
     tree.write(annotations_path,encoding='utf-8')

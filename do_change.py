@@ -260,7 +260,7 @@ def save2xml(anno_list, voc_anno_dir, src_img_dir, dst_img_dir, args, proess_typ
                 etree.SubElement(obj, "name").text = obj_anno["type"]
             etree.SubElement(obj, "visibility").text = obj_anno["visibility"]
             etree.SubElement(obj, "occ").text = obj_anno["occlude"]
-            etree.SubElement(obj, "direct").text = obj_anno["truncation_factor"]
+            etree.SubElement(obj, "truncate").text = obj_anno["truncation_factor"]
             try:
                 etree.SubElement(obj, "face").text = obj_anno["face"]
             except:

@@ -12,7 +12,7 @@ import datetime
 from PIL import Image
 from tqdm import trange
 
-root_dir = "/home/chenzhen/code/detection/datasets/Dair_x2x"
+root_dir = "/home/chenzhen/code/detection/datasets/repo3d"
 
 
 def voc2coco():
@@ -20,11 +20,11 @@ def voc2coco():
         "Car": 0, "Bus": 1, "Cycling": 2, "Pedestrian": 3, "driverless_Car": 4, "Truck": 5, "Animal": 6, "Obstacle": 7, "Special_Target": 8, "Other_Objects": 9, "Unmanned_riding": 10
     }
     # 创建coco的文件夹
-    if not os.path.exists(os.path.join(root_dir, "coco_single")):
-        os.makedirs(os.path.join(root_dir, "coco_single"))
-        os.makedirs(os.path.join(root_dir, "coco_single", "annotations"))
-        os.makedirs(os.path.join(root_dir, "coco_single", "train"))
-        os.makedirs(os.path.join(root_dir, "coco_single", "val"))
+    if not os.path.exists(os.path.join(root_dir, "coco_repo-train")):
+        os.makedirs(os.path.join(root_dir, "coco_repo-train"))
+        os.makedirs(os.path.join(root_dir, "coco_repo-train", "annotations"))
+        os.makedirs(os.path.join(root_dir, "coco_repo-train", "train"))
+        os.makedirs(os.path.join(root_dir, "coco_repo-train", "val"))
 
     # 创建 总标签data
     now = datetime.datetime.now()
@@ -56,7 +56,7 @@ def voc2coco():
         )
 
     # 处理coco数据集train中images字段。
-    images_dir = os.path.join(root_dir,  'single-infrastructure-side-image_9807202513588224', 'single-infrastructure-side-image')
+    images_dir = os.path.join(root_dir,  'train', 'train')
     images = os.listdir(images_dir)
 
     # 生成每个图片对应的image_id
@@ -66,7 +66,7 @@ def voc2coco():
 
     # 获取训练图片
     train_img = []
-    fp = os.path.join(root_dir,  'single-infrastructure-side-image_9807202513588224', 'single-infrastructure-side-image')
+    fp = os.path.join(root_dir,  'train', 'train')
     for line in os.listdir(fp):
         train_img.append(line)
     # 获取训练图片的数据
@@ -81,7 +81,7 @@ def voc2coco():
         occlude_list = []
         truncation_factor_list = []
         xml = image[:-4] + '.xml'
-        tree = ET.parse(os.path.join(root_dir, 'single-infrastructure-side-xml', xml))
+        tree = ET.parse(os.path.join(root_dir, 'train', 'xml_label', xml))
         root = tree.getroot()
         size = root.findall('size')
         for element in size:
@@ -104,7 +104,7 @@ def voc2coco():
             bndbox = i.findall('bndbox')
             occlude = i.findall('occ')[0].text
             occlude_list.append(occlude)
-            truncation_factor = i.findall('direct')[0].text
+            truncation_factor = i.findall('truncate')[0].text
             truncation_factor_list.append(truncation_factor)
 
             for j in bndbox:
@@ -120,7 +120,7 @@ def voc2coco():
                     category_id=category[i],
                     # visibility=int(visibility_list[i]),
                     occ=int(occlude_list[i]),
-                    direct=int(truncation_factor_list[i]),
+                    truncate=int(truncation_factor_list[i]),
                     iscrowd=int(0),
                     area=(xmax[i] - xmin[i]) * (ymax[i] - ymin[i]),
                     bbox=[xmin[i], ymin[i], xmax[i] - xmin[i], ymax[i] - ymin[i]]
@@ -128,7 +128,7 @@ def voc2coco():
             )
             bbox_id += 1
     # 生成训练集的json
-    json.dump(data, open(os.path.join(root_dir, 'coco_single', 'annotations', 'train.json'), 'w'))
+    json.dump(data, open(os.path.join(root_dir, 'coco_repo-train', 'annotations', 'train.json'), 'w'))
 
 
 

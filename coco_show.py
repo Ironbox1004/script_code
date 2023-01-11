@@ -84,14 +84,15 @@ def show_coco(data_root, ann_file, img_prefix, only_bbox=True, show_all=True):
         else:
             example_coco.showAnns(annotations)
 
+
         plt.show()
 
 
 if __name__ == '__main__':
     # 和cfg里面设置一样 coco
-    data_root = '/home/chenzhen/code/detection/datasets/dair-and-dthangzhou/'
-    ann_file = data_root + 'annotations/val.json'
-    img_prefix = '/home/chenzhen/code/detection/datasets/dair-and-dthangzhou/val'
+    data_root = '/home/chenzhen/code/detection/datasets/repo3d/coco_repo/'
+    ann_file = data_root + 'annotations/train.json'
+    img_prefix = '/home/chenzhen/code/detection/datasets/repo3d/coco_repo/train'
     show_coco(data_root, ann_file, img_prefix)
 
     # # voc转化为coco后显示
