@@ -1,7 +1,10 @@
-# python code
-## include:
-- data-change
-- data-process
-- data-show
-- and other
+# 一些开发过程中便携使用的脚本
+## 包含有：
+1. 数据集处理:
+    - 数据集转换：coco voc coco
+    - 标签内容修改，删除
+    - voc数据集处理
+2. 损失函数
+3. bbox变换
+4. bounding_box绘制
 
