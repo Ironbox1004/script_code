@@ -5,7 +5,7 @@ from os.path import join as pjoin
 from tqdm import tqdm
 
 
-src = "/home/chenzhen/code/detection/datasets/repo3d/val/xml_label"
+src = "/home/chenzhen/code/detection/datasets/hz_baidu_dataset/repo3d/train/xml_label"
 
 for category_name in tqdm(os.listdir(src)):
     annotations_path = pjoin(src, category_name)
@@ -21,14 +21,11 @@ for category_name in tqdm(os.listdir(src)):
         elif obj.find("name").text == "Cyclist":
             obj.find("name").text = 'Cycling'
 
-        elif obj.find("name").text == "Cyclist":
-            obj.find("name").text = 'Cycling'
-
         elif obj.find("name").text == "Motorcyclist":
             obj.find("name").text = 'Cycling'
 
         elif obj.find("name").text == "Barrowlist":
-            obj.find("name").text = 'Cycling'
+            obj.find("name").text = 'Special_Car'
 
         elif obj.find("name").text == "Trafficcone":
             obj.find("name").text = 'Special_Target'

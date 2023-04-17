@@ -1,6 +1,7 @@
 import os
 import yaml
 import time
+from tqdm import tqdm
 
 def ConvertVOCXml(file_name=None, xml_file=None, ymal_path=None, label_file=None):
     xml_file = open((os.path.join(xml_file, file_name) + ".xml"), 'w')
@@ -66,13 +67,13 @@ def ConvertVOCXml(file_name=None, xml_file=None, ymal_path=None, label_file=None
 
 
 if __name__ == '__main__':
-    xml_file = "/home/chenzhen/code/detection/datasets/repo3d/val/xml_label2"
-    ymal_path = "/home/chenzhen/code/detection/datasets/repo3d/val/extrinsics"
-    label_file = "/home/chenzhen/code/detection/datasets/repo3d/val/label_2"
+    xml_file = "/home/chenzhen/code/detection/datasets/hz_baidu_dataset/repo3d/train/xml_label"
+    ymal_path = "/home/chenzhen/code/detection/datasets/hz_baidu_dataset/repo3d/train/copy-extrinsic"
+    label_file = "/home/chenzhen/code/detection/datasets/hz_baidu_dataset/repo3d/train/copy-label_2"
     # ConvertVOCXml(file_path="samplexml",file_name="000009.xml")
     # Start time
     start = time.time()
-    for file_name in os.listdir(label_file):
+    for file_name in tqdm(os.listdir(label_file)):
         file_name = file_name.split('.')[0]
         ConvertVOCXml(file_name=file_name, xml_file=xml_file, ymal_path=ymal_path, label_file=label_file)
     # End time

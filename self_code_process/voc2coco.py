@@ -11,7 +11,7 @@ import datetime
 from PIL import Image
 from tqdm import trange
 
-root_dir = "/home/chenzhen/code/detection/datasets/dt_imgdata"
+root_dir = "/home/chenzhen/code/detection/datasets/hz_baidu_dataset/repo3d"
 
 
 def voc2coco():
@@ -20,14 +20,14 @@ def voc2coco():
     #['Car', 'Bus', 'Cyclist', 'Pedestrian', 'driverless_car', 'Truck', 'Tricyclist', 'Trafficcone']
     # class_name_to_id = {'Car': 0, 'Bus': 1, 'Cyclist': 2, 'Pedestrian': 3, 'driverless_car': 4, 'Truck': 5, 'Tricyclist': 6, 'Trafficcone': 7}        # 改为自己的类别名称，以及对应的类别id
     class_name_to_id = {
-        "Car": 0, "Bus": 1, "Cycling": 2, "Pedestrian": 3, "driverless_Car": 4, "Truck": 5, "Animal": 6, "Obstacle": 7, "Special_Target": 8, "Other_Objects": 9, "Unmanned_riding": 10
+        "Car": 0, "Bus": 1, "Cycling": 2, "Pedestrian": 3, "Special_Car": 4, "Truck": 5, "Obstacle": 6, "Special_Target": 7, "Other_Objects": 8
     }
     # 创建coco的文件夹
-    if not os.path.exists(os.path.join(root_dir, "coco_dt_with_date_captured1")):
-        os.makedirs(os.path.join(root_dir, "coco_dt_with_date_captured1"))
-        os.makedirs(os.path.join(root_dir, "coco_dt_with_date_captured1", "annotations"))
-        os.makedirs(os.path.join(root_dir, "coco_dt_with_date_captured1", "train"))
-        os.makedirs(os.path.join(root_dir, "coco_dt_with_date_captured1", "val"))
+    if not os.path.exists(os.path.join(root_dir, "coco_repo3d_train")):
+        os.makedirs(os.path.join(root_dir, "coco_repo3d_train"))
+        os.makedirs(os.path.join(root_dir, "coco_repo3d_train", "annotations"))
+        os.makedirs(os.path.join(root_dir, "coco_repo3d_train", "train"))
+        os.makedirs(os.path.join(root_dir, "coco_repo3d_train", "val"))
 
     # 创建 总标签data
     now = datetime.datetime.now()
@@ -59,7 +59,7 @@ def voc2coco():
         )
 
     # 处理coco数据集train中images字段。
-    images_dir = os.path.join(root_dir,  'VOC_DT_20221130-1', 'JPEGImages')
+    images_dir = os.path.join(root_dir,  'VOC_DT_20221130-2', 'JPEGImages')
     images = os.listdir(images_dir)
 
     # 生成每个图片对应的image_id
@@ -69,7 +69,7 @@ def voc2coco():
 
     # 获取训练图片
     train_img = []
-    fp = open(os.path.join(root_dir, 'VOC_DT_20221130-1', 'ImageSets', 'Main', 'train.txt'))
+    fp = open(os.path.join(root_dir, 'VOC_DT_20230221-2', 'ImageSets', 'Main', 'train.txt'))
     for line in fp.readlines():
         list = line[:-1]
         file_name = (list.split('/')[-1]).split('.')
@@ -89,7 +89,7 @@ def voc2coco():
                 file_name=image,  # 图片的文件名带后缀
                 height=img.height,
                 width=img.width,
-                date_captured=str('hangzhou1'),
+                date_captured=str('hangzhou2'),
                 # id=image[:-4],
                 id=images_id[image[:-4]],
             )
@@ -109,11 +109,12 @@ def voc2coco():
         occlude_list = []
         truncation_factor_list = []
         import xml.etree.ElementTree as ET
-        tree = ET.parse(os.path.join(root_dir,  'VOC_DT_20221130-1', 'Annotations', xml))
+        tree = ET.parse(os.path.join(root_dir,  'VOC_DT_20230221-2', 'Annotations', xml))
         root = tree.getroot()
         object = root.findall('object')
         for i in object:
-            category.append(class_name_to_id[i.findall('name')[0].text])
+            label = 8 if i.findall('name')[0].text == '动物' else class_name_to_id[i.findall('name')[0].text]
+            category.append(label)
             bndbox = i.findall('bndbox')
 
             visibility = i.findall('visibility')[0].text
@@ -145,11 +146,11 @@ def voc2coco():
             )
             bbox_id += 1
     # 生成训练集的json
-    json.dump(data, open(os.path.join(root_dir, 'coco_dt_with_date_captured1', 'annotations', 'train.json'), 'w'))
+    json.dump(data, open(os.path.join(root_dir, 'coco_dt_with_date_captured2', 'annotations', 'train.json'), 'w'))
 
     # 获取验证图片
     val_img = []
-    fp = open(os.path.join(root_dir,  'VOC_DT_20221130-1', 'ImageSets', 'Main', 'test.txt'))
+    fp = open(os.path.join(root_dir,  'VOC_DT_20230221-2', 'ImageSets', 'Main', 'test.txt'))
     for line in fp.readlines():
         list = line[:-1]
         file_name = (list.split('/')[-1]).split('.')
@@ -175,7 +176,7 @@ def voc2coco():
                 file_name=image,  # 图片的文件名带后缀
                 height=img.height,
                 width=img.width,
-                date_captured=str('hangzhou1'),
+                date_captured=str('hangzhou2'),
                 id=images_id[image[:-4]],   # 图片名作为id
             )
         )
@@ -193,7 +194,7 @@ def voc2coco():
         occlude_list = []
         truncation_factor_list = []
         import xml.etree.ElementTree as ET
-        tree = ET.parse(os.path.join(root_dir,  'VOC_DT_20221130-1', 'Annotations', xml))
+        tree = ET.parse(os.path.join(root_dir,  'VOC_DT_20230221-2', 'Annotations', xml))
         root = tree.getroot()
         object = root.findall('object')
         for i in object:
@@ -227,19 +228,19 @@ def voc2coco():
             )
             bbox_id += 1
     # 生成验证集的json
-    json.dump(data, open(os.path.join(root_dir, 'coco_dt_with_date_captured1', 'annotations', 'val.json'), 'w'))
+    json.dump(data, open(os.path.join(root_dir, 'coco_dt_with_date_captured2', 'annotations', 'val.json'), 'w'))
     print('| VOC -> COCO annotations transform finish.')
     print('Start copy images...')
 
     # 复制图片
     m = len(train_img)
     for i in trange(m):
-        shutil.copy(os.path.join(images_dir, train_img[i]), os.path.join(root_dir, 'coco_dt_with_date_captured1', 'train', train_img[i]))
+        shutil.copy(os.path.join(images_dir, train_img[i]), os.path.join(root_dir, 'coco_dt_with_date_captured2', 'train', train_img[i]))
     print('| Train images copy finish.')
 
     m = len(val_img)
     for i in trange(m):
-        shutil.copy(os.path.join(images_dir, val_img[i]), os.path.join(root_dir, 'coco_dt_with_date_captured1', 'val', val_img[i]))
+        shutil.copy(os.path.join(images_dir, val_img[i]), os.path.join(root_dir, 'coco_dt_with_date_captured2', 'val', val_img[i]))
     print('| Val images copy finish.')
 
 

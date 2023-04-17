@@ -2,6 +2,33 @@
 import shutil
 import os
 
+import json
+import os
+import shutil
+
+
+img_dir = "/home/chenzhen/code/detection/datasets/hz_baidu_dataset/dair-hz-1/train"
+
+val_ann_dir = "/home/chenzhen/code/detection/datasets/hz_baidu_dataset/dair-hz-1/random_coco_split_val.json"
+train_ann_dir = "/home/chenzhen/code/detection/datasets/hz_baidu_dataset/dair-hz-1/random_coco_split_train.json"
+
+val_save_dir = "/home/chenzhen/code/detection/datasets/hz_baidu_dataset/dair-hz-1/val_use"
+train_save_dir = "/home/chenzhen/code/detection/datasets/hz_baidu_dataset/dair-hz-1/train_use"
+
+
+with open(train_ann_dir, 'r', encoding='unicode_escape') as fp:
+    img_list = os.listdir(img_dir)
+    json_data = json.load(fp)
+    for i in range(len(json_data['images'])):
+        if json_data['images'][i]['file_name'] in img_list:
+            shutil.copy(os.path.join(img_dir, json_data['images'][i]['file_name']),
+                        os.path.join(train_save_dir, json_data['images'][i]['file_name']))
+        else:
+            print(json_data['images'][i]['file_name'])
+
+
+
+
 
 
 # img_path = '/home/chenzhen/code/detection/datasets/dt_imgdata/640-640-result-1'
@@ -11,13 +38,13 @@ import os
 # def copy_file(img_path,xml_path,save_xml_path):
 #     for img_list in os.listdir(img_path):
 #         img_name = img_list.split('.')
-#         # if len(img_name) == 2:
-#         #     copy_name = xml_path + str(img_name[0])  + '.xml'
-#         #     shutil.copy(copy_name, save_xml_path)
-#         # else:
-#         copy_name = xml_path + str(img_name[0]) + '.' + str(img_name[1]) + '.xml'
+#         if len(img_name) == 2:
+#             copy_name = xml_path + str(img_name[0])  + '.xml'
+#             shutil.copy(copy_name, save_xml_path)
+#         else:
+#             copy_name = xml_path + str(img_name[0]) + '.' + str(img_name[1]) + '.xml'
 #         shutil.copy(copy_name, save_xml_path)
-#
+
 #
 # def file_rename():
 #     path = "/home/chenzhen/code/detection/datasets/Dair_x2x/single-infrastructure-side/calib/camera_intrinsic"
@@ -91,7 +118,20 @@ import os
 #             num = num + 1
 #             print(num)
 
-if __name__ == '__main__':
+# if __name__ == '__main__':
+#
+#     path = "/home/chenzhen/code/detection/datasets/plate_plt/val_detect/double_val/"
+#     train_images = "/home/chenzhen/code/detection/datasets/yolo_plate/images/val"
+#     train_label = "/home/chenzhen/code/detection/datasets/yolo_plate/labels/val"
+#
+#     for img_list in os.listdir(path):
+#         text = os.path.splitext(img_list)[-1]
+#         copy_name = path + img_list
+#         if text == ".jpg":
+#             shutil.copy(copy_name, train_images)
+#         else:
+#             shutil.copy(copy_name, train_label)
+
 
     # img_path = '/home/chenzhen/code/detection/datasets/repo3d/val/extrinsics'
     # xml_path = '/home/chenzhen/code/detection/datasets/repo3d/val/validation-image_2/'
@@ -109,23 +149,35 @@ if __name__ == '__main__':
     #     except:
     #         print(copy_name)
 
-    train_text = "/home/chenzhen/code/detection/datasets/repo3d/val/extrinsics"
-    val_text = "/home/chenzhen/code/detection/datasets/repo3d/val/validation-image_2"
+    # train_text = "/home/chenzhen/code/detection/datasets/repo3d/val/extrinsics"
+    # val_text = "/home/chenzhen/code/detection/datasets/repo3d/val/validation-image_2"
+    #
+    # train_list = []
+    # val_list = []
+    #
+    # for img_list in os.listdir(train_text):
+    #     img_name = img_list.split('.')
+    #     train_list.append(img_name[0])
+    #
+    # for img_list1 in os.listdir(train_text):
+    #     img_name = img_list1.split('.')
+    #     val_list.append(img_name[0])
+    #
+    # num = 0
+    # for i in train_list:
+    #    if i not in val_list:
+    #         print(i)
+    #         num = num + 1
+    #         print(num)
 
-    train_list = []
-    val_list = []
-
-    for img_list in os.listdir(train_text):
-        img_name = img_list.split('.')
-        train_list.append(img_name[0])
-
-    for img_list1 in os.listdir(train_text):
-        img_name = img_list1.split('.')
-        val_list.append(img_name[0])
-
-    num = 0
-    for i in train_list:
-       if i not in val_list:
-            print(i)
-            num = num + 1
-            print(num)
+#
+# if __name__ == '__main__':
+#     train = "/home/chenzhen/code/detection/datasets/hz_baidu_dataset/dair_hz/train"
+#     val = "/home/chenzhen/code/detection/datasets/hz_baidu_dataset/dair_hz/val"
+#
+#     train_list = os.listdir(train)
+#     val_list = os.listdir(val)
+#
+#     for i in train_list:
+#         if i in val_list:
+#             print(i)

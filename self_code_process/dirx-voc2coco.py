@@ -12,19 +12,21 @@ import datetime
 from PIL import Image
 from tqdm import trange
 
-root_dir = "/home/chenzhen/code/detection/datasets/repo3d"
+root_dir = "/home/chenzhen/code/detection/datasets/hz_baidu_dataset/repo3d"
 
+# "Car": 0, "Bus": 1, "Cycling": 2, "Pedestrian": 3, "driverless_Car": 4, "Truck": 5, "Animal": 6, "Obstacle": 7, "Special_Target": 8, "Other_Objects": 9, "Unmanned_riding": 10
 
 def voc2coco():
     class_name_to_id = {
-        "Car": 0, "Bus": 1, "Cycling": 2, "Pedestrian": 3, "driverless_Car": 4, "Truck": 5, "Animal": 6, "Obstacle": 7, "Special_Target": 8, "Other_Objects": 9, "Unmanned_riding": 10
+        "Car": 0, "Bus": 1, "Cycling": 2, "Pedestrian": 3, "Special_Car": 4, "Truck": 5, "Obstacle": 6,
+        "Special_Target": 7, "Other_Objects": 8
     }
     # 创建coco的文件夹
-    if not os.path.exists(os.path.join(root_dir, "coco_repo-train")):
-        os.makedirs(os.path.join(root_dir, "coco_repo-train"))
-        os.makedirs(os.path.join(root_dir, "coco_repo-train", "annotations"))
-        os.makedirs(os.path.join(root_dir, "coco_repo-train", "train"))
-        os.makedirs(os.path.join(root_dir, "coco_repo-train", "val"))
+    if not os.path.exists(os.path.join(root_dir, "coco_repo3d_train")):
+        os.makedirs(os.path.join(root_dir, "coco_repo3d_train"))
+        os.makedirs(os.path.join(root_dir, "coco_repo3d_train", "annotations"))
+        # os.makedirs(os.path.join(root_dir, "coco_repo3d_train", "train"))
+        # os.makedirs(os.path.join(root_dir, "coco_repo3d_train", "val"))
 
     # 创建 总标签data
     now = datetime.datetime.now()
@@ -81,7 +83,7 @@ def voc2coco():
         occlude_list = []
         truncation_factor_list = []
         xml = image[:-4] + '.xml'
-        tree = ET.parse(os.path.join(root_dir, 'train', 'xml_label', xml))
+        tree = ET.parse(os.path.join(root_dir, "train", 'xml_label', xml))
         root = tree.getroot()
         size = root.findall('size')
         for element in size:
@@ -128,7 +130,7 @@ def voc2coco():
             )
             bbox_id += 1
     # 生成训练集的json
-    json.dump(data, open(os.path.join(root_dir, 'coco_repo-train', 'annotations', 'train.json'), 'w'))
+    json.dump(data, open(os.path.join(root_dir, 'coco_repo3d_train', 'annotations', 'train.json'), 'w'))
 
 
 

@@ -6,9 +6,9 @@ import json
 
 
 def ConvertVOCXml(file_path="", file_name=""):
-    xml_file = open(('/home/chenzhen/code/detection/datasets/Dair_x2x/cooperative-vehicle-infrastructure-xml/' + file_name[:-5] + '.xml'), 'w')
+    xml_file = open(('/home/chenzhen/code/detection/datasets/hz_baidu_dataset/Dair_x2x/cooperative-vehicle-infrastructure-xml/' + file_name[:-5] + '.xml'), 'w')
 
-    f2 = open(('/home/chenzhen/code/detection/datasets/Dair_x2x/cooperative-vehicle-infrastructure/infrastructure-side/calib/camera_intrinsic/' + file_name))
+    f2 = open(('/home/chenzhen/code/detection/datasets/hz_baidu_dataset/Dair_x2x/cooperative-vehicle-infrastructure/infrastructure-side/calib/camera_intrinsic/' + file_name))
     content2 = json.load(f2)
 
     xml_file.write('<annotation>\n')
@@ -20,7 +20,7 @@ def ConvertVOCXml(file_path="", file_name=""):
     xml_file.write('        <date_captured>' + str(content2['cameraID']) + '</date_captured>\n')
     xml_file.write('    </size>\n')
 
-    f = open(('/home/chenzhen/code/detection/datasets/Dair_x2x/cooperative-vehicle-infrastructure/infrastructure-side/label/camera/' + file_name))
+    f = open(('/home/chenzhen/code/detection/datasets/hz_baidu_dataset/Dair_x2x/cooperative-vehicle-infrastructure/infrastructure-side/label/camera/' + file_name))
     content = json.load(f)
 
     for i in range(len(content)):
@@ -52,13 +52,13 @@ def ConvertVOCXml(file_path="", file_name=""):
 
 
 if __name__ == "__main__":
-    basePath = '/home/chenzhen/code/detection/datasets/Dair_x2x/cooperative-vehicle-infrastructure/infrastructure-side/label/camera/'  # dair-v2x数据集的json文件放置位置
+    basePath = '/home/chenzhen/code/detection/datasets/hz_baidu_dataset/Dair_x2x/cooperative-vehicle-infrastructure/infrastructure-side/label/camera/'  # dair-v2x数据集的json文件放置位置
     totaljson = os.listdir(basePath)
     totaljson.sort()
     total_num = 0
     flag = False
     print("正在转换")
-    saveBasePath = '/home/chenzhen/code/detection/datasets/Dair_x2x/cooperative-vehicle-infrastructure-xml/'  # voc格式的xml文件放置位置
+    saveBasePath = '/home/chenzhen/code/detection/datasets/hz_baidu_dataset/Dair_x2x/cooperative-vehicle-infrastructure-xml/'  # voc格式的xml文件放置位置
     if os.path.exists(saveBasePath) == False:  # 判断文件夹是否存在
         os.makedirs(saveBasePath)
 
